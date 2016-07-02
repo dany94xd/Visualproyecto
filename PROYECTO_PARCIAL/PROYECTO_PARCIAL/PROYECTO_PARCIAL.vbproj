@@ -69,6 +69,10 @@
     <Compile Include="Administrador.vb" />
     <Compile Include="Articulo.vb" />
     <Compile Include="Categoria.vb" />
+    <Compile Include="Cliente.vb" />
+    <Compile Include="Detalle.vb" />
+    <Compile Include="Factura.vb" />
+    <Compile Include="Matriz.vb" />
     <Compile Include="Impuesto.vb" />
     <Compile Include="Module1.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -87,6 +91,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Sistema.vb" />
+    <Compile Include="Sucursal.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
