@@ -1,9 +1,19 @@
 ﻿Imports System.Xml
 
 Public Class Sistema
+    Private usuario As Usuario
     Private administrador As Administrador
     Private categorias As ArrayList
     Dim categ As Categoria 'auxiliar de categorias
+
+    Public Property P_usuario() As Usuario
+        Get
+            Return Me.usuario
+        End Get
+        Set(ByVal value As Usuario)
+            Me.usuario = value
+        End Set
+    End Property
 
     Public Property P_administrador() As Administrador
         Get
@@ -95,8 +105,63 @@ Public Class Sistema
         Me.P_categorias.Item(index) = categ
     End Sub
 
+    Public Function Menu_Principal() As Byte
+        Dim opc As Byte = 0
+        Do While opc < 1 Or opc > 2
+            Console.WriteLine("SELECCIONE UNA ACCION")
+            Console.WriteLine("1.- LOGIN")
+            Console.WriteLine("2.- SALIR")
+            Try
+                opc = Console.ReadLine()
+            Catch ex As Exception
+                opc = 0
+            End Try
+        Loop
+        Return opc
+    End Function
+
+    Public Function login() As Usuario
+        Dim user As String = ""
+        Dim pass As String = ""
+        Console.Write("USUARIO : ")
+        user = Console.ReadLine()
+        Console.Write("PASSWORD: ")
+        pass = Console.ReadLine()
+        Dim patch As String = "XML\CONFIGURACION\Usuarios.xml"
+        'CARGA DESDE USUARIOS.XML
+        Dim xmlDoc As New XmlDocument()
+        xmlDoc.Load(patch)
+        Dim lista_usuarios As XmlNodeList = xmlDoc.GetElementsByTagName("usuario")
+        For Each usuario As XmlNode In lista_usuarios
+            If user = usuario.Attributes(0).Value And pass = usuario.Attributes(1).Value Then
+                Me.usuario = New Usuario()
+                Me.usuario.P_user = usuario.Attributes(0).Value
+                Me.usuario.P_password = usuario.Attributes(1).Value
+                For Each datoUsuario As XmlNode In usuario
+                    Select Case datoUsuario.Name
+                        Case "nombre"
+                            Me.usuario.P_nombre = CStr(datoUsuario.InnerText)
+                        Case "tipo"
+                            Me.usuario.P_tipo = CStr(datoUsuario.InnerText)
+                    End Select
+                Next
+                MsgBox("LOGIN CORRECTO")
+                Return Me.P_usuario()
+            End If
+        Next
+        MsgBox("USUARIO o CONTRASEÑA INCORRECTO")
+        Return Me.usuario
+    End Function
+
     Public Sub New()
-        Me.P_administrador = New Administrador
-        Me.P_categorias = New ArrayList
+        Do While Me.P_usuario Is Nothing
+            Dim opc As Byte = 0
+            opc = Menu_Principal()
+            Select opc
+                Case 1
+                    Me.usuario = login()
+            End Select
+        Loop
+
     End Sub
 End Class

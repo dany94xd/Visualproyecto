@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Administrador.vb" />
     <Compile Include="Articulo.vb" />
+    <Compile Include="Cajero.vb" />
     <Compile Include="Categoria.vb" />
     <Compile Include="Cliente.vb" />
     <Compile Include="Detalle.vb" />
@@ -92,6 +93,7 @@
     </Compile>
     <Compile Include="Sistema.vb" />
     <Compile Include="Sucursal.vb" />
+    <Compile Include="Usuario.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
