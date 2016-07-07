@@ -2,7 +2,6 @@
 
 Public Class Sistema
     Private usuario As Usuario
-    Private administrador As Administrador
     Private categorias As ArrayList
     Dim categ As Categoria 'auxiliar de categorias
 
@@ -12,15 +11,6 @@ Public Class Sistema
         End Get
         Set(ByVal value As Usuario)
             Me.usuario = value
-        End Set
-    End Property
-
-    Public Property P_administrador() As Administrador
-        Get
-            Return Me.administrador
-        End Get
-        Set(ByVal value As Administrador)
-            Me.administrador = value
         End Set
     End Property
 
@@ -38,27 +28,26 @@ Public Class Sistema
     '    Me.Administrar(administrador.Menu)
     'End Sub
 
-    Public Sub Administrar(opc As Byte)
+    Public Sub Listar_Productos()
 
-        Select Case opc
-            Case 1
-                Dim index As Byte = 1
-                Dim i As Byte = 1
-                Me.Cargar_Categorias()
-                Console.WriteLine("ESCRIBA EL INDICE DE LA CATEGORIA")
-                For Each categoria As Categoria In P_categorias
-                    Console.WriteLine(i & ".- " & categoria.P_nombre)
-                    i = i + 1
-                Next
-                index = Console.ReadLine()
-                Me.Cargar_Articulos_Categoria(index - 1)
-                Me.categ = Me.P_categorias.Item(index - 1)
-                Me.categ.Listar_Articulos()
-        End Select
+        Dim index As Byte = 1
+        Dim i As Byte = 1
+        Me.Cargar_Categorias()
+        Console.WriteLine("ESCRIBA EL INDICE DE LA CATEGORIA")
+        For Each categoria As Categoria In P_categorias
+            Console.WriteLine(i & ".- " & categoria.P_nombre)
+            i = i + 1
+        Next
+        index = Console.ReadLine()
+        Me.Cargar_Articulos_Categoria(index - 1)
+        Me.categ = Me.P_categorias.Item(index - 1)
+        Me.categ.Listar_Articulos()
+
 
     End Sub
 
     Public Sub Cargar_Categorias()
+        Me.P_categorias = New ArrayList
         Dim patch As String = "XML\ARTICULOS\Categorias.xml"
         'CARGA DESDE CATEGORIAS.XML
         Dim xmlDoc As New XmlDocument()
@@ -106,11 +95,11 @@ Public Class Sistema
     End Sub
 
     Public Function Menu_Principal() As Byte
-        Dim opc As Byte = 0
-        Do While opc < 1 Or opc > 2
+        Dim opc As Byte = 99
+        Do While opc < 0 Or opc > 1
             Console.WriteLine("SELECCIONE UNA ACCION")
             Console.WriteLine("1.- LOGIN")
-            Console.WriteLine("2.- SALIR")
+            Console.WriteLine("0.- SALIR")
             Try
                 opc = Console.ReadLine()
             Catch ex As Exception
@@ -159,9 +148,80 @@ Public Class Sistema
             opc = Menu_Principal()
             Select opc
                 Case 1
-                    Me.usuario = login()
+                    While Me.P_usuario Is Nothing
+                        Me.P_usuario = login()
+                    End While
+                    If Me.P_usuario.P_tipo = "ADMINISTRADOR" Then
+                        Administrar()
+                    Else
+                        Facturar()
+                    End If
+                Case 0
+                    Console.WriteLine("GRACIAS X SU VISITA")
+                    Exit Do
             End Select
         Loop
 
     End Sub
+
+    Public Function Administrar() As Byte
+        Dim opc As Byte = 0
+        'MsgBox("en administrar")
+        While Not (Me.P_usuario Is Nothing)
+            opc = Menu_Administrador()
+            Select Case opc
+                Case 1
+                    Listar_Productos()
+                Case 0
+                    Me.P_usuario = Nothing
+            End Select
+        End While
+        Return opc
+    End Function
+
+    Public Function Menu_Administrador() As Byte
+        Dim opc As Byte = 99
+        Do While opc < 0 Or opc > 1
+            Console.WriteLine("SELECCIONE UNA ACCION")
+            Console.WriteLine("1.- LISTAR PRODUCTOS X CATEGORIA")
+            Console.WriteLine("0.- CERRAR SESION")
+            Try
+                opc = Console.ReadLine()
+            Catch ex As Exception
+                opc = 99
+            End Try
+        Loop
+        Return opc
+    End Function
+
+    Public Function Facturar() As Byte
+        Dim opc As Byte = 0
+        'MsgBox("en administrar")
+        While Not (Me.P_usuario Is Nothing)
+            opc = Menu_Vendedor()
+            Select Case opc
+                Case 1
+                    Dim factura As Factura = New Factura()
+                    factura.Visualizar()
+                Case 0
+                    Me.P_usuario = Nothing
+            End Select
+        End While
+        Return opc
+    End Function
+
+    Public Function Menu_Vendedor() As Byte
+        Dim opc As Byte = 99
+        Do While opc < 0 Or opc > 1
+            Console.WriteLine("SELECCIONE UNA ACCION")
+            Console.WriteLine("1.- FACTURAR")
+            Console.WriteLine("0.- CERRAR SESION")
+            Try
+                opc = Console.ReadLine()
+            Catch ex As Exception
+                opc = 99
+            End Try
+        Loop
+        Return opc
+    End Function
 End Class

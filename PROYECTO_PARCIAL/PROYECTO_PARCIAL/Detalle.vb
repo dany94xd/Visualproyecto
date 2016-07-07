@@ -50,4 +50,8 @@
             Me.ivaCausado = Me.precioTotal * factor / 100
         End If
     End Sub
+
+    Public Sub Mostrar()
+        Console.WriteLine(Me.P_cantidad & vbTab & Me.P_articulo.P_nombre & vbTab & Me.P_articulo.P_precio & vbTab & Me.P_precioTotal)
+    End Sub
 End Class
