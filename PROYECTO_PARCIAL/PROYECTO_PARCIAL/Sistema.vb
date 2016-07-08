@@ -187,7 +187,7 @@ Public Class Sistema
         Dim lista_usuarios As XmlNodeList = xmlDoc.GetElementsByTagName("usuario")
         For Each usuario As XmlNode In lista_usuarios
             If user = usuario.Attributes(0).Value And pass = usuario.Attributes(1).Value Then
-                Me.usuario = New Usuario()
+                Me.usuario = New Usuario(0)
                 Me.usuario.P_user = usuario.Attributes(0).Value
                 Me.usuario.P_password = usuario.Attributes(1).Value
                 For Each datoUsuario As XmlNode In usuario
@@ -235,7 +235,10 @@ Public Class Sistema
             opc = Menu_Administrador()
             Select Case opc
                 Case 1
-                    'Listar_Productos()
+                    Console.WriteLine("salto")
+                Case 2
+                    Dim user As Usuario = New Usuario
+                    user.Guardar()
                 Case 0
                     Me.P_usuario = Nothing
             End Select
@@ -245,9 +248,10 @@ Public Class Sistema
 
     Public Function Menu_Administrador() As Byte
         Dim opc As Byte = 99
-        Do While opc < 0 Or opc > 1
+        Do While opc < 0 Or opc > 2
             Console.WriteLine("SELECCIONE UNA ACCION")
             Console.WriteLine("1.- LISTAR PRODUCTOS X CATEGORIA")
+            Console.WriteLine("2.- INSERTAR NUEVO USUARIO")
             Console.WriteLine("0.- CERRAR SESION")
             Try
                 opc = Console.ReadLine()

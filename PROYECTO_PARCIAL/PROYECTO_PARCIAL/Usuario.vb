@@ -1,4 +1,6 @@
-﻿Public Class Usuario
+﻿Imports System.Xml
+
+Public Class Usuario
     Private user As String
     Private password As String
     Private nombre As String
@@ -47,10 +49,46 @@
         Me.P_tipo = tipo
     End Sub
 
+    Public Sub New(forma As Byte)
+        Me.P_user = ""
+        Me.password = ""
+        Me.P_nombre = ""
+        Me.P_tipo = ""
+    End Sub
+
     Public Sub New()
-        'Me.P_user = ""
-        'Me.P_password = ""
-        'Me.P_nombre = ""
-        'Me.P_tipo = ""
+        Console.WriteLine("INSERTE LOS DATOS DEL NUEVO USUARIO")
+        Console.Write("NOMBRE: ")
+        Me.P_nombre = Console.ReadLine
+        Console.Write("USER: ")
+        Me.P_user = LCase(Console.ReadLine)
+        Console.Write("PASSWORD: ")
+        Me.P_password = LCase(Console.ReadLine)
+        Console.Write("TIPO (ADMINISTRADOR o VENDEDOR): ")
+        Me.P_tipo = UCase(Console.ReadLine)
+    End Sub
+
+    Public Sub Guardar()
+        Dim xmlDoc As New XmlDocument
+        xmlDoc.Load("XML\CONFIGURACION\Usuarios.xml")
+        Dim nodo As XmlElement
+        Dim nodo_hijo As XmlNode
+        Dim escriba As XmlNode
+
+        escriba = xmlDoc.DocumentElement
+
+        nodo = xmlDoc.CreateElement("usuario")
+        nodo.SetAttribute("user", "", Me.P_user)
+        nodo.SetAttribute("pass", "", Me.P_password)
+        nodo_hijo = xmlDoc.CreateElement("nombre")
+        nodo_hijo.InnerText = Me.P_nombre
+        nodo.AppendChild(nodo_hijo)
+        nodo_hijo = xmlDoc.CreateElement("tipo")
+        nodo_hijo.InnerText = Me.P_tipo
+        nodo.AppendChild(nodo_hijo)
+
+        escriba.AppendChild(nodo)
+        xmlDoc.Save("XML\CONFIGURACION\Usuarios.xml")
+        MsgBox("USUARIO GUARDADO")
     End Sub
 End Class
