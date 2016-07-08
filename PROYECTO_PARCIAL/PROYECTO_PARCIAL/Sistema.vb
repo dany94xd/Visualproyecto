@@ -293,4 +293,8 @@ Public Class Sistema
         Loop
         Return opc
     End Function
+
+    Public Sub Agregar_Usuario()
+
+    End Sub
 End Class
