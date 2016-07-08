@@ -1,4 +1,7 @@
-﻿Public Class Factura
+﻿Imports System.Xml
+
+Public Class Factura
+    Private aux_provincia As String
     Private baseIva As Byte
     Private fecha As Date
     Private cliente As Cliente
@@ -83,6 +86,7 @@
         If Me.P_cliente.P_identificacion = "" Then
             MsgBox("el cliente no existe")
             Me.P_cliente = New Cliente(identificacion)
+            Me.P_cliente.Grabar_Cliente()
             Me.P_detalles = New ArrayList
             Me.subTotal = 0.0
             Me.ivaTotal = 0.0
@@ -98,6 +102,7 @@
 
     Public Sub Visualizar()
         Console.Clear()
+        Me.numero = "00001"
         Me.fecha = Today
         Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "FECHA   : " & Me.fecha)
         Me.P_cliente.Mostrar_Datos()
@@ -172,6 +177,7 @@
                     agregar = False
             End Select
         End While
+        'Guardar()
     End Sub
 
     Public Sub Parametros(provincias As ArrayList, formasPago As ArrayList)
@@ -204,7 +210,7 @@
             End Try
         Loop While opc_pr < 1 Or opc_pr > provincias.Count
         Dim provincia As Provincia = provincias.Item(opc_pr - 1)
-
+        Me.aux_provincia = provincia.P_nombre
         If provincia.P_nombre = "ESMERALDAS" Or provincia.P_nombre = "MANABI" Then
             Me.baseIva = 12 - formaPago.P_beneficio
         Else
@@ -220,5 +226,60 @@
             Me.ivaTotal = Me.ivaTotal + detalle.P_ivaCausado
         Next
         Me.total = Me.P_subTotal + Me.P_ivaTotal
+    End Sub
+
+    Public Sub Guardar()
+        Dim xmlDoc As New XmlDocument
+        'xmlDoc.Load("XML\FACTURAS\" & Me.aux_provincia & " .xml")
+        Dim nodo As XmlElement
+        Dim nodo_hijo As XmlNode
+        Dim escriba As XmlNode
+
+        'escriba = xmlDoc.DocumentElement
+        nodo = xmlDoc.CreateElement("lista")
+        nodo_hijo = xmlDoc.CreateElement("factura")
+        nodo.SetAttribute("numero", "", Me.P_numero)
+        'xmlDoc.AppendChild(nodo)
+        nodo_hijo = xmlDoc.CreateElement("fecha")
+        nodo_hijo.InnerText = Me.fecha
+        nodo.AppendChild(nodo_hijo)
+        nodo_hijo = xmlDoc.CreateElement("cliente")
+        nodo_hijo.InnerText = Me.P_cliente.P_identificacion
+        nodo.AppendChild(nodo_hijo)
+        nodo = xmlDoc.CreateElement("detalles")
+        For Each detalle As Detalle In P_detalles
+            nodo = xmlDoc.CreateElement("detalle")
+            nodo_hijo = xmlDoc.CreateElement("cantidad")
+            nodo_hijo.InnerText = detalle.P_cantidad
+            nodo.AppendChild(nodo_hijo)
+            nodo_hijo = xmlDoc.CreateElement("articulo")
+            nodo_hijo.InnerText = detalle.P_articulo.P_nombre
+            nodo.AppendChild(nodo_hijo)
+            nodo_hijo = xmlDoc.CreateElement("precio_unitario")
+            nodo_hijo.InnerText = detalle.P_articulo.P_precio
+            nodo.AppendChild(nodo_hijo)
+            nodo_hijo = xmlDoc.CreateElement("precio_total")
+            nodo_hijo.InnerText = detalle.P_precioTotal
+            nodo.AppendChild(nodo_hijo)
+            nodo_hijo = xmlDoc.CreateElement("iva_causado")
+            nodo_hijo.InnerText = detalle.P_ivaCausado
+            nodo.AppendChild(nodo_hijo)
+        Next
+        nodo_hijo = xmlDoc.CreateElement("subtotal")
+        nodo_hijo.InnerText = Me.P_subTotal
+        nodo.AppendChild(nodo_hijo)
+        nodo_hijo = xmlDoc.CreateElement("iva_total")
+        nodo_hijo.InnerText = Me.P_ivaTotal
+        nodo.AppendChild(nodo_hijo)
+        nodo_hijo = xmlDoc.CreateElement("total")
+        nodo_hijo.InnerText = Me.P_total
+        nodo.AppendChild(nodo_hijo)
+
+        'escriba.AppendChild(nodo)
+
+        xmlDoc.Save("XML\FACTURAS\" & Me.aux_provincia & " .xml")
+
+        'xmlDoc.Save("XML\CONFIGURACION\Clientesv2.xml")
+        'MsgBox("Archivo generado con ÉXITO")
     End Sub
 End Class

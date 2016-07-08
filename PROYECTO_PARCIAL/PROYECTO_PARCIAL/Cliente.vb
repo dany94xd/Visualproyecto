@@ -104,4 +104,37 @@ Public Class Cliente
             End If
         Next
     End Sub
+
+    Public Sub Grabar_Cliente()
+        Dim xmlDoc As New XmlDocument
+        xmlDoc.Load("XML\CONFIGURACION\Clientes.xml")
+        Dim nodo As XmlElement
+        Dim nodo_hijo As XmlNode
+        Dim escriba As XmlNode
+       
+        escriba = xmlDoc.DocumentElement
+
+        nodo = xmlDoc.CreateElement("cliente")
+        nodo.SetAttribute("identificacion", "", Me.P_identificacion)
+        'xmlDoc.AppendChild(nodo)
+        nodo_hijo = xmlDoc.CreateElement("nombre")
+        nodo_hijo.InnerText = Me.P_nombre
+        nodo.AppendChild(nodo_hijo)
+        nodo_hijo = xmlDoc.CreateElement("telefono")
+        nodo_hijo.InnerText = Me.P_telefono
+        nodo.AppendChild(nodo_hijo)
+        nodo_hijo = xmlDoc.CreateElement("direccion")
+        nodo_hijo.InnerText = Me.P_direccion
+        nodo.AppendChild(nodo_hijo)
+        nodo_hijo = xmlDoc.CreateElement("email")
+        nodo_hijo.InnerText = Me.P_email
+        nodo.AppendChild(nodo_hijo)
+
+        escriba.AppendChild(nodo)
+
+        xmlDoc.Save("XML\CONFIGURACION\Clientes.xml")
+
+        'xmlDoc.Save("XML\CONFIGURACION\Clientesv2.xml")
+        'MsgBox("Archivo generado con ÉXITO")
+    End Sub
 End Class
