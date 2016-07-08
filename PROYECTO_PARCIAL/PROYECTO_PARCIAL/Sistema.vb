@@ -202,7 +202,9 @@ Public Class Sistema
             Select Case opc
                 Case 1
                     Dim factura As Factura = New Factura()
-                    factura.Visualizar()
+                    Cargar_Categorias()
+                    factura.Agregar_Detalles(Me.P_categorias)
+                    'factura.Visualizar()
                 Case 0
                     Me.P_usuario = Nothing
             End Select

@@ -73,13 +73,14 @@
     'End Sub
 
     Public Sub New()
-        Dim idCliente As Integer = 0
+        Dim identificacion As String = ""
         Console.Write("INGRESE EL ID DEL CLIENTE: ")
-        idCliente = Console.ReadLine()
-        Me.P_cliente = New Cliente(idCliente)
-        If Me.P_cliente.P_numeroDocumento Is Nothing Then
+        identificacion = Console.ReadLine()
+        Me.P_cliente = New Cliente()
+        Me.P_cliente.Cargar(identificacion)
+        If Me.P_cliente.P_identificacion = "" Then
             MsgBox("el cliente no existe")
-            Me.P_cliente = New Cliente()
+            Me.P_cliente = New Cliente(identificacion)
             Me.P_detalles = New ArrayList
             Me.subTotal = 0.0
             Me.ivaTotal = 0.0
@@ -90,9 +91,11 @@
             Me.ivaTotal = 0.0
             Me.total = 0.0
         End If
+
     End Sub
 
     Public Sub Visualizar()
+        Console.Clear()
         Me.P_cliente.Mostrar_Datos()
         Console.WriteLine("CANT" & vbTab & "DETALLES" & vbTab & vbTab & vbTab & vbTab & "P. UNIT" & vbTab & vbTab & "P.TOTAL")
         For Each detalle As Detalle In Me.P_detalles
@@ -101,5 +104,79 @@
         Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "SUBTOTAL: " & vbTab & "$ " & P_subTotal)
         Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "IVA(14%): " & vbTab & "$ " & P_ivaTotal)
         Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "TOTAL   : " & vbTab & "$ " & P_total)
+    End Sub
+
+    Public Sub Agregar_Detalles(categorias As ArrayList)
+        Dim agregar As Boolean = True
+        Dim index As Byte = 1
+        While agregar
+            Dim categ As Categoria = New Categoria
+            Console.WriteLine("SELECCIONE UNA CATEGORIA")
+            For Each categoria As Categoria In categorias
+                Console.WriteLine(index & ".- " & categoria.P_nombre)
+                index = index + 1
+            Next
+            Do
+                Try
+                    index = Console.ReadLine()
+                Catch ex As Exception
+                    index = 0
+                    Console.WriteLine("INGRESE UN NUMERO VALIDO")
+                End Try
+            Loop While index < 1 Or index > categorias.Count
+            categ = categorias.Item(index - 1)
+            categ.Cargar_Articulos(categ.P_nombre)
+            Dim articulo As Articulo = New Articulo()
+            Dim codigo As String = ""
+            Do
+                Console.WriteLine("ESCRIBA EL CODIGO DEL ARTICULO")
+                categ.Listar_Articulos()
+                codigo = Console.ReadLine()
+                articulo = categ.Consultar_Articulo(codigo.ToUpper)
+                'Console.WriteLine(articulo.P_nombre + "AQUIIII")
+            Loop While articulo.P_nombre Is Nothing
+            Dim cantidad As Integer = 0
+            Do
+                Console.Write("CANTIDAD DE ARTICULOS: ")
+                Try
+                    cantidad = Console.ReadLine()
+                Catch ex As Exception
+                    index = 0
+                    Console.WriteLine("INGRESE UNA CIFRA VALIDA")
+                End Try
+            Loop While cantidad < 1
+            Dim detalle As Detalle = New Detalle(cantidad, articulo)
+            detalle.CalcularPrecioTotal()
+            detalle.CalcularIvaCausado(14)
+            Me.P_detalles.Add(detalle)
+            Generar_Totales()
+            Visualizar()
+            Dim opc As Byte = 99
+            Do
+                Console.WriteLine("NUEVO DETALLE: 1.- SI    0.- NO")
+                Try
+                    opc = Console.ReadLine()
+                Catch ex As Exception
+                    opc = 99
+                    Console.WriteLine("INGRESE UNA OPCION VALIDA")
+                End Try
+            Loop While opc > 1
+            Select Case opc
+                Case 1
+                    agregar = True
+                Case 0
+                    agregar = False
+            End Select
+        End While
+    End Sub
+
+    Public Sub Generar_Totales()
+        Me.subTotal = 0.0
+        Me.ivaTotal = 0.0
+        For Each detalle As Detalle In Me.P_detalles
+            Me.subTotal = Me.subTotal + detalle.P_precioTotal
+            Me.ivaTotal = Me.ivaTotal + detalle.P_ivaCausado
+        Next
+        Me.total = Me.P_subTotal + Me.P_ivaTotal
     End Sub
 End Class

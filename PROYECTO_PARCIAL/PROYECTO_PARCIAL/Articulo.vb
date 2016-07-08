@@ -43,4 +43,11 @@
     Public Sub Mostrar_Datos()
         Console.WriteLine(vbTab & Me.P_codigo & vbTab & vbTab & Me.P_nombre & vbTab & vbTab & Me.P_precio)
     End Sub
+
+    Public Sub New()
+        Me.P_codigo = ""
+        Me.P_nombre = ""
+        Me.precio = 0.0
+        Me.P_pagoIva = True
+    End Sub
 End Class

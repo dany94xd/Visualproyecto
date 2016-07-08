@@ -1,28 +1,18 @@
 ﻿Imports System.Xml
 
 Public Class Cliente
-    Private idCliente As Integer
-    Private numeroDocumento As String
+    Private identificacion As String
     Private nombre As String
     Private telefono As String
     Private direccion As String
     Private email As String
 
-    Public Property P_idCliente() As Integer
+    Public Property P_identificacion() As String
         Get
-            Return Me.idCliente
-        End Get
-        Set(ByVal value As Integer)
-            Me.idCliente = value
-        End Set
-    End Property
-
-    Public Property P_numeroDocumento() As String
-        Get
-            Return Me.numeroDocumento
+            Return Me.identificacion
         End Get
         Set(ByVal value As String)
-            Me.numeroDocumento = value
+            Me.identificacion = value
         End Set
     End Property
 
@@ -62,20 +52,17 @@ Public Class Cliente
         End Set
     End Property
 
-    'Public Sub New()
-    '    Me.P_idCliente = 0
-    '    Me.P_numeroDocumento = ""
-    '    Me.P_nombre = ""
-    '    Me.P_telefono = ""
-    '    Me.P_direccion = ""
-    '    Me.P_email = ""
-    'End Sub
-
     Public Sub New()
-        Me.P_idCliente = 0
+        Me.P_identificacion = ""
+        Me.P_nombre = ""
+        Me.P_telefono = ""
+        Me.P_direccion = ""
+        Me.P_email = ""
+    End Sub
+
+    Public Sub New(identificacion As String)
+        Me.P_identificacion = identificacion
         Console.WriteLine("INGRESE LOS DATOS DE CLIENTE")
-        Console.Write("CI o RUC :")
-        Me.P_numeroDocumento = Console.ReadLine
         Console.Write("NOMBRE   :")
         Me.P_nombre = Console.ReadLine
         Console.Write("TELEFONO :")
@@ -88,23 +75,21 @@ Public Class Cliente
 
     Public Sub Mostrar_Datos()
         Console.WriteLine("CLIENTE  : " & Me.P_nombre)
-        Console.WriteLine("CI / RUC : " & Me.P_numeroDocumento & vbTab & vbTab & vbTab & vbTab & "TELEFONO: " & Me.P_telefono)
+        Console.WriteLine("CI / RUC : " & Me.P_identificacion & vbTab & vbTab & vbTab & vbTab & "TELEFONO: " & Me.P_telefono)
         Console.WriteLine("DIRECCION: " & Me.P_direccion & vbNewLine)
     End Sub
 
-    Public Sub New(idCliente As Integer)
+    Public Sub Cargar(identificacion As String)
         Dim patch As String = "XML\CONFIGURACION\Clientes.xml"
         'CARGA DESDE CLIENTES.XML
         Dim xmlDoc As New XmlDocument()
         xmlDoc.Load(patch)
         Dim lista_clientes As XmlNodeList = xmlDoc.GetElementsByTagName("cliente")
         For Each cliente As XmlNode In lista_clientes
-            If idCliente = cliente.Attributes(0).Value Then
-                Me.P_idCliente = cliente.Attributes(0).Value
+            If identificacion = cliente.Attributes(0).Value Then
+                Me.P_identificacion = cliente.Attributes(0).Value
                 For Each datoCliente As XmlNode In cliente
                     Select Case datoCliente.Name
-                        Case "numeroDocumento"
-                            Me.P_numeroDocumento = CStr(datoCliente.InnerText)
                         Case "nombre"
                             Me.P_nombre = CStr(datoCliente.InnerText)
                         Case "telefono"
