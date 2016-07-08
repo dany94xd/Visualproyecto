@@ -56,6 +56,14 @@
     End Sub
 
     Public Sub Mostrar()
-        Console.WriteLine(Me.P_cantidad & vbTab & Me.P_articulo.P_nombre & vbTab & vbTab & vbTab & vbTab & Me.P_articulo.P_precio & vbTab & Me.P_precioTotal)
+        If Me.P_articulo.P_nombre.Length > 0 And Me.P_articulo.P_nombre.Length < 10 Then
+            Console.WriteLine(Me.P_cantidad & vbTab & Me.P_articulo.P_nombre & vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & Me.P_articulo.P_precio & vbTab & Me.P_precioTotal)
+        End If
+        If Me.P_articulo.P_nombre.Length > 10 And Me.P_articulo.P_nombre.Length < 20 Then
+            Console.WriteLine(Me.P_cantidad & vbTab & Me.P_articulo.P_nombre & vbTab & vbTab & vbTab & vbTab & Me.P_articulo.P_precio & vbTab & Me.P_precioTotal)
+        End If
+        If Me.P_articulo.P_nombre.Length > 20 And Me.P_articulo.P_nombre.Length < 30 Then
+            Console.WriteLine(Me.P_cantidad & vbTab & Me.P_articulo.P_nombre & vbTab & vbTab & Me.P_articulo.P_precio & vbTab & Me.P_precioTotal)
+        End If
     End Sub
 End Class

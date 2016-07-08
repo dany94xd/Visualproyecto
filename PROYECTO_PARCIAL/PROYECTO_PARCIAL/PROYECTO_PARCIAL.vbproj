@@ -71,6 +71,7 @@
     <Compile Include="Cliente.vb" />
     <Compile Include="Detalle.vb" />
     <Compile Include="Factura.vb" />
+    <Compile Include="FormaPago.vb" />
     <Compile Include="Matriz.vb" />
     <Compile Include="Impuesto.vb" />
     <Compile Include="Module1.vb" />
@@ -89,6 +90,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Provincia.vb" />
     <Compile Include="Sistema.vb" />
     <Compile Include="Sucursal.vb" />
     <Compile Include="Usuario.vb" />

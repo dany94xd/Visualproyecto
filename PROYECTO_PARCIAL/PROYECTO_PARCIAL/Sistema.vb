@@ -3,7 +3,8 @@
 Public Class Sistema
     Private usuario As Usuario
     Private categorias As ArrayList
-    Dim categ As Categoria 'auxiliar de categorias
+    Private provincias As ArrayList
+    Private formasPago As ArrayList
 
     Public Property P_usuario() As Usuario
         Get
@@ -23,28 +24,46 @@ Public Class Sistema
         End Set
     End Property
 
+    Public Property P_provincias() As ArrayList
+        Get
+            Return Me.provincias
+        End Get
+        Set(ByVal value As ArrayList)
+            Me.provincias = value
+        End Set
+    End Property
+
+    Public Property P_formasPago() As ArrayList
+        Get
+            Return Me.formasPago
+        End Get
+        Set(ByVal value As ArrayList)
+            Me.formasPago = value
+        End Set
+    End Property
+
     'Public Sub New()
     '    Me.administrador = New Administrador
     '    Me.Administrar(administrador.Menu)
     'End Sub
 
-    Public Sub Listar_Productos()
+    'Public Sub Listar_Productos()
 
-        Dim index As Byte = 1
-        Dim i As Byte = 1
-        Me.Cargar_Categorias()
-        Console.WriteLine("ESCRIBA EL INDICE DE LA CATEGORIA")
-        For Each categoria As Categoria In P_categorias
-            Console.WriteLine(i & ".- " & categoria.P_nombre)
-            i = i + 1
-        Next
-        index = Console.ReadLine()
-        Me.Cargar_Articulos_Categoria(index - 1)
-        Me.categ = Me.P_categorias.Item(index - 1)
-        Me.categ.Listar_Articulos()
+    '    Dim index As Byte = 1
+    '    Dim i As Byte = 1
+    '    Me.Cargar_Categorias()
+    '    Console.WriteLine("ESCRIBA EL INDICE DE LA CATEGORIA")
+    '    For Each categoria As Categoria In P_categorias
+    '        Console.WriteLine(i & ".- " & categoria.P_nombre)
+    '        i = i + 1
+    '    Next
+    '    index = Console.ReadLine()
+    '    Me.Cargar_Articulos_Categoria(index - 1)
+    '    Me.categ = Me.P_categorias.Item(index - 1)
+    '    Me.categ.Listar_Articulos()
 
 
-    End Sub
+    'End Sub
 
     Public Sub Cargar_Categorias()
         Me.P_categorias = New ArrayList
@@ -66,33 +85,78 @@ Public Class Sistema
         Next
     End Sub
 
-    Public Sub Cargar_Articulos_Categoria(index As Byte)
-        categ = Me.P_categorias.Item(index)
-        Dim patch As String = "XML\ARTICULOS\" + categ.P_nombre + ".xml"
-        Console.WriteLine(patch)
+    Public Sub Cargar_FormasPago()
+        Me.P_formasPago = New ArrayList
+        Dim patch As String = "XML\CONFIGURACION\FormasPago.xml"
+        Dim xmlDoc As New XmlDocument()
+        xmlDoc.Load(patch)
+        Dim lista_formas As XmlNodeList = xmlDoc.GetElementsByTagName("forma")
+        For Each forma As XmlNode In lista_formas
+            Dim formaNombre As String = forma.Attributes(0).Value
+            Dim ben As Byte = 0
+            For Each detalleForma As XmlNode In forma
+                Select Case detalleForma.Name
+                    Case "beneficio"
+                        ben = CByte(detalleForma.InnerText)
+                End Select
+            Next
+            Dim form As FormaPago = New FormaPago(formaNombre, ben)
+            Me.P_formasPago.Add(form)
+        Next
+    End Sub
+
+    Public Sub Cargar_Provincias()
+        Me.P_provincias = New ArrayList
+        Dim patch As String = "XML\CONFIGURACION\Provincias.xml"
         'CARGA DESDE CATEGORIAS.XML
         Dim xmlDoc As New XmlDocument()
         xmlDoc.Load(patch)
-        Dim lista_articulo As XmlNodeList = xmlDoc.GetElementsByTagName("articulo")
-        For Each articulo As XmlNode In lista_articulo
-            Dim artic As Articulo = New Articulo
-            For Each detalleArticulo As XmlNode In articulo
-                Select Case detalleArticulo.Name
-                    Case "codigo"
-                        artic.P_codigo = CStr(detalleArticulo.InnerText)
-                    Case "nombre"
-                        artic.P_nombre = CStr(detalleArticulo.InnerText)
-                    Case "precio"
-                        artic.P_precio = CDbl(detalleArticulo.InnerText)
-                    Case "pagoIva"
-                        artic.P_pagoIva = CStr(detalleArticulo.InnerText)
-                End Select
+        Dim lista_provincias As XmlNodeList = xmlDoc.GetElementsByTagName("provincia")
+        For Each provincia As XmlNode In lista_provincias
+            Dim nombre_prov As String = provincia.Attributes(0).Value
+            Dim suc As Sucursal = Nothing
+            For Each sucursal As XmlNode In provincia
+                Dim secSRI As String = sucursal.Attributes(0).Value
+                For Each datoSucursal As XmlNode In sucursal
+                    Select Case datoSucursal.Name
+                        Case "direccion"
+                            suc = New Sucursal(secSRI, datoSucursal.InnerText)
+                    End Select
+                Next
+                
             Next
-            Me.categ.P_articulos.Add(artic)
+            Dim prov As Provincia = New Provincia(nombre_prov, suc)
+            Me.P_provincias.Add(prov)
         Next
-        'categ.Listar_Articulos()
-        Me.P_categorias.Item(index) = categ
     End Sub
+
+    'Public Sub Cargar_Articulos_Categoria(index As Byte)
+    '    categ = Me.P_categorias.Item(index)
+    '    Dim patch As String = "XML\ARTICULOS\" + categ.P_nombre + ".xml"
+    '    Console.WriteLine(patch)
+    '    'CARGA DESDE CATEGORIAS.XML
+    '    Dim xmlDoc As New XmlDocument()
+    '    xmlDoc.Load(patch)
+    '    Dim lista_articulo As XmlNodeList = xmlDoc.GetElementsByTagName("articulo")
+    '    For Each articulo As XmlNode In lista_articulo
+    '        Dim artic As Articulo = New Articulo
+    '        For Each detalleArticulo As XmlNode In articulo
+    '            Select Case detalleArticulo.Name
+    '                Case "codigo"
+    '                    artic.P_codigo = CStr(detalleArticulo.InnerText)
+    '                Case "nombre"
+    '                    artic.P_nombre = CStr(detalleArticulo.InnerText)
+    '                Case "precio"
+    '                    artic.P_precio = CDbl(detalleArticulo.InnerText)
+    '                Case "pagoIva"
+    '                    artic.P_pagoIva = CStr(detalleArticulo.InnerText)
+    '            End Select
+    '        Next
+    '        Me.categ.P_articulos.Add(artic)
+    '    Next
+    '    'categ.Listar_Articulos()
+    '    Me.P_categorias.Item(index) = categ
+    'End Sub
 
     Public Function Menu_Principal() As Byte
         Dim opc As Byte = 99
@@ -134,7 +198,7 @@ Public Class Sistema
                             Me.usuario.P_tipo = CStr(datoUsuario.InnerText)
                     End Select
                 Next
-                MsgBox("LOGIN CORRECTO")
+                'MsgBox("LOGIN CORRECTO")
                 Return Me.P_usuario()
             End If
         Next
@@ -171,7 +235,7 @@ Public Class Sistema
             opc = Menu_Administrador()
             Select Case opc
                 Case 1
-                    Listar_Productos()
+                    'Listar_Productos()
                 Case 0
                     Me.P_usuario = Nothing
             End Select
@@ -203,6 +267,9 @@ Public Class Sistema
                 Case 1
                     Dim factura As Factura = New Factura()
                     Cargar_Categorias()
+                    Cargar_Provincias()
+                    Cargar_FormasPago()
+                    factura.Parametros(P_provincias, P_formasPago)
                     factura.Agregar_Detalles(Me.P_categorias)
                     'factura.Visualizar()
                 Case 0

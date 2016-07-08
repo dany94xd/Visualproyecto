@@ -49,4 +49,12 @@
             Me.email = value
         End Set
     End Property
+
+    Public Sub New()
+        Me.P_nombre = "PROYECTO PARCIAL"
+        Me.P_ruc = "2006151850001"
+        Me.P_telefono = "0979124745"
+        Me.P_direccion = "Edcom - Via Principal ESPOL"
+        Me.P_email = "hchimbo@espol.edu.ec"
+    End Sub
 End Class

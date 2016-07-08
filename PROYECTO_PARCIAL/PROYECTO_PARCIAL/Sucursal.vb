@@ -1,23 +1,13 @@
 ﻿Public Class Sucursal
-    Private nombre As String
-    Private telefono As String
+    Private secSRI As String
     Private direccion As String
 
-    Public Property P_nombre() As String
+    Public Property P_secSRI() As String
         Get
-            Return Me.nombre
+            Return Me.secSRI
         End Get
         Set(ByVal value As String)
-            Me.nombre = value
-        End Set
-    End Property
-
-    Public Property P_telefono() As String
-        Get
-            Return Me.telefono
-        End Get
-        Set(ByVal value As String)
-            Me.telefono = value
+            Me.secSRI = value
         End Set
     End Property
 
@@ -30,9 +20,8 @@
         End Set
     End Property
 
-    Public Sub New(nombre As String, telefono As String, direccion As String)
-        Me.P_nombre = nombre
-        Me.P_telefono = telefono
+    Public Sub New(secSRI As String, direccion As String)
+        Me.P_secSRI = secSRI
         Me.P_direccion = direccion
     End Sub
 End Class

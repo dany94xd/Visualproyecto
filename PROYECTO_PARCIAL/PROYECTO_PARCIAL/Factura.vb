@@ -1,4 +1,6 @@
 ﻿Public Class Factura
+    Private baseIva As Byte
+    Private fecha As Date
     Private cliente As Cliente
     Private numero As String
     Private detalles As ArrayList
@@ -96,13 +98,15 @@
 
     Public Sub Visualizar()
         Console.Clear()
+        Me.fecha = Today
+        Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "FECHA   : " & Me.fecha)
         Me.P_cliente.Mostrar_Datos()
         Console.WriteLine("CANT" & vbTab & "DETALLES" & vbTab & vbTab & vbTab & vbTab & "P. UNIT" & vbTab & vbTab & "P.TOTAL")
         For Each detalle As Detalle In Me.P_detalles
             detalle.Mostrar()
         Next
         Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "SUBTOTAL: " & vbTab & "$ " & P_subTotal)
-        Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "IVA(14%): " & vbTab & "$ " & P_ivaTotal)
+        Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "IVA(" & baseIva & "%): " & vbTab & "$ " & P_ivaTotal)
         Console.WriteLine(vbTab & vbTab & vbTab & vbTab & vbTab & vbTab & "TOTAL   : " & vbTab & "$ " & P_total)
     End Sub
 
@@ -147,7 +151,7 @@
             Loop While cantidad < 1
             Dim detalle As Detalle = New Detalle(cantidad, articulo)
             detalle.CalcularPrecioTotal()
-            detalle.CalcularIvaCausado(14)
+            detalle.CalcularIvaCausado(baseIva)
             Me.P_detalles.Add(detalle)
             Generar_Totales()
             Visualizar()
@@ -168,6 +172,44 @@
                     agregar = False
             End Select
         End While
+    End Sub
+
+    Public Sub Parametros(provincias As ArrayList, formasPago As ArrayList)
+        Dim opc_fp As Byte = 1
+        Do
+            Console.WriteLine("Elija una forma de pago")
+            For Each forma As FormaPago In formasPago
+                Console.WriteLine(opc_fp & ".- " & forma.P_nombre)
+                opc_fp = opc_fp + 1
+            Next
+            Try
+                opc_fp = Console.ReadLine
+            Catch ex As Exception
+                opc_fp = 0
+            End Try
+        Loop While opc_fp < 1 Or opc_fp > formasPago.Count
+        Dim formaPago As FormaPago = formasPago.Item(opc_fp - 1)
+
+        Dim opc_pr As Byte = 1
+        Do
+            Console.WriteLine("Elija una provincia:")
+            For Each prov As Provincia In provincias
+                Console.WriteLine(opc_pr & ".- " & prov.P_nombre)
+                opc_pr = opc_pr + 1
+            Next
+            Try
+                opc_pr = Console.ReadLine
+            Catch ex As Exception
+                opc_pr = 0
+            End Try
+        Loop While opc_pr < 1 Or opc_pr > provincias.Count
+        Dim provincia As Provincia = provincias.Item(opc_pr - 1)
+
+        If provincia.P_nombre = "ESMERALDAS" Or provincia.P_nombre = "MANABI" Then
+            Me.baseIva = 12 - formaPago.P_beneficio
+        Else
+            Me.baseIva = 14 - formaPago.P_beneficio
+        End If
     End Sub
 
     Public Sub Generar_Totales()
